@@ -1,0 +1,44 @@
+version: '3.7'
+
+services:
+  nodejs:
+    image: node:17.5.0-alpine3.15 
+    container_name: nodecontain
+    working_dir: /nodeapp
+    volumes: 
+      - .:/nodeapp
+    ports:
+      - 8000:8000
+    command: tail -f /dev/null
+    networks:
+     - mongo
+
+  mongodb:
+    image: mongo:5.0.6-focal
+    container_name: mongodb
+    hostname: mongohost
+    volumes:
+      - $HOME/uzrnem/database/mongo_db:/data/db
+      - $HOME/uzrnem/database/backup:/backup
+    ports:
+      - 27017:27017
+    networks:
+      - mongo
+
+  mongo-express:
+    image: mongo-express:1.0.0-alpha.4
+    container_name: mongo-express
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_BASICAUTH_USERNAME=root
+      - ME_CONFIG_BASICAUTH_PASSWORD=root
+    volumes:
+      - $HOME/uzrnem/database/mongo_db
+    ports:
+      - 8002:8081
+    networks:
+      - mongo
+
+networks:
+  mongo: # database_mongo
+    driver: bridge
