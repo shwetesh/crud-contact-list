@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello Code</title>
+    <script src="./vue-2.6.12.js"></script>
+    <script src="./axios.min.js"></script>
+</head>
+<body>
+    <h3>Sign up</h3>
+    <div class="container" id="vue-app">
+
+        <div class="container">   
+            <label><b>Email : </b></label>   
+            <input type="text" placeholder="Enter Email" v-model="email" required>
+            <br>  
+            <label><b>Password : </b></label>   
+            <input type="password" placeholder="Enter Password" v-model="password" required>
+            <br>  
+            <button @click="login()">Login</button>   
+        </div>
+</div>    
+</body>
+<script>
+    new Vue({
+      el: '#vue-app',
+      data: {
+       email:"ghost@gmail.com",
+       password:"pass"
+      },
+      methods: {
+       login: async function () {
+            var response = await axios.post('/user/login', {email:this.email,password: this.password});
+            console.log(response.data);
+            localStorage.setItem("token", response.data.token);
+            // 'Authorization': 'Bearer ' + localStorage.getItem("token")
+            console.log(response.data);
+        }
+      },
+    });
+  </script>
+</html>

@@ -2,10 +2,10 @@ import Contact from '../models/contact.model.js';
 
 var list = async (req, res) => {
     try{
-        const contact = await Contact.find();
-        res.json(contact);
+        const contactList = await Contact.find({owner_user_id: req.loginuser.id});
+        res.json(contactList);
     } catch(err){
-        res.send('error'+err)
+        res.status(400).send({message: err.message})
     }
 }
 
@@ -13,41 +13,39 @@ var add = async (req,res) => {
     const contact = new Contact({
         name: req.body.name,
         mobile: req.body.mobile,
-        email_id: req.body.email_id
+        email_id: req.body.email_id,
+        owner_user_id: req.loginuser.id
     })
     try {
         const a1 = await contact.save()
         res.json(a1)
     } catch(err) {
-        res.send("Error")
+        res.status(400).send({message: err.message})
     }
 }
 
 var find = async (req,res) =>{
     try{
-        const contact=await Contact.findById(req.params.id);
+        const contact=await Contact.findOne({ _id: req.params.id, owner_user_id: req.loginuser.id });
         res.json(contact);
     }
     catch(err){
-        res.send('error'+err)
+        res.status(400).send({message: err.message})
     }
 } 
 
 var deleteone = async (req,res) => {
     try{
-        //const contact=await Contact.findById(req.params.id);
-        //await contact.delete();
-        res.json(await Contact.deleteOne({ _id: req.params.id }));
+        res.json(await Contact.deleteOne({ _id: req.params.id, owner_user_id: req.loginuser.id }));
     }
     catch(err){
-        res.send("error");
+        res.status(400).send({message: err.message})
     }
-
 }
 
 var update = async (req,res) => {
     try{
-        const r1=await Contact.updateOne({ _id: req.params.id }, {
+        const r1=await Contact.updateOne({ _id: req.params.id, owner_user_id: req.loginuser.id }, {
             name: req.body.name,
             mobile: req.body.mobile,
             email_id: req.body.email_id
@@ -55,7 +53,7 @@ var update = async (req,res) => {
         res.json(r1);
     }
     catch(err){
-        res.send("error");
+        res.status(400).send({message: err.message})
     }
 }
-export default { list, add ,find ,deleteone,update};
+export default { list, add ,find , deleteone, update};
